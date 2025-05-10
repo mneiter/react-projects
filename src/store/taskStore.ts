@@ -1,9 +1,33 @@
 import { Task } from '@/types/task';
 import { nanoid } from 'nanoid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const STORAGE_KEY = 'my_tasks';
 
 export function useTaskStore() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isClient, setIsClient] = useState(false); // <- NEW
+
+  // Mark that we're running on the client
+  useEffect(() => {
+    setIsClient(true);
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed: Task[] = JSON.parse(stored);
+        setTasks(parsed);
+      } catch {
+        console.error('Invalid tasks in localStorage');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+  }, [tasks, isClient]);
 
   const addTask = (title: string) => {
     const newTask: Task = {
@@ -31,5 +55,6 @@ export function useTaskStore() {
     addTask,
     toggleTask,
     removeTask,
+    isClient, // <- return this flag for conditional rendering
   };
 }
