@@ -1,12 +1,16 @@
-import { useState } from 'react';
 import { Task } from '@/types/task';
 import { nanoid } from 'nanoid';
+import { useState } from 'react';
 
 export function useTaskStore() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const addTask = (title: string) => {
-    const newTask: Task = { id: nanoid(), title, completed: false };
+    const newTask: Task = {
+      id: nanoid(),
+      title: title.trim(),
+      completed: false,
+    };
     setTasks((prev) => [...prev, newTask]);
   };
 
