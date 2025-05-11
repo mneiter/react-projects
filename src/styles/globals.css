@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global styles can go below */
+
+body {
+    font-family: system-ui, sans-serif;
+    background-color: #f3f4f6;
+    /* Tailwind's gray-100 */
+    color: #1f2937;
+    /* Tailwind's gray-800 */
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+}

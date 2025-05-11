@@ -11,6 +11,7 @@
   "dependencies": {
     "nanoid": "^5.1.5",
     "next": "15.3.2",
+    "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -20,9 +21,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.6",
     "typescript": "^5"
   }
 }

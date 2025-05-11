@@ -2,13 +2,18 @@
 
 import { Task } from "@/types/task";
 
-interface TaskListProps {
+interface Props {
     tasks: Task[];
     toggleTask: (id: string) => void;
     removeTask: (id: string) => void;
+    isClient: boolean;
 }
 
-export const TaskList = ({ tasks, toggleTask, removeTask }: TaskListProps) => {
+export const TaskList = ({ tasks, toggleTask, removeTask, isClient }: Props) => {
+    if (!isClient) {
+        return <p className="text-gray-500 italic">Loading tasks...</p>;
+    }
+
     if (tasks.length === 0) {
         return <p className="text-gray-500">No tasks yet.</p>;
     }
@@ -16,10 +21,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask }: TaskListProps) => {
     return (
         <ul className="space-y-2">
             {tasks.map((task) => (
-                <li
-                    key={task.id}
-                    className="flex items-center justify-between p-2 border rounded"
-                >
+                <li key={task.id} className="flex justify-between p-2 border rounded">
                     <div className="flex items-center gap-2">
                         <input
                             type="checkbox"
@@ -34,7 +36,6 @@ export const TaskList = ({ tasks, toggleTask, removeTask }: TaskListProps) => {
                     <button
                         onClick={() => removeTask(task.id)}
                         className="text-red-500 hover:text-red-700"
-                        title="Delete task"
                     >
                         🗑
                     </button>
