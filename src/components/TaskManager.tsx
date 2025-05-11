@@ -1,8 +1,7 @@
 "use client";
 
-import { useTaskStore } from "@/store/taskStore";
 import { Task } from "@/types/task";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddTaskForm } from "./tasks/AddTaskForm";
 import { TaskList } from "./tasks/TaskList";
 import { TaskStats } from "./tasks/TaskStats";
@@ -10,17 +9,63 @@ import { TaskStats } from "./tasks/TaskStats";
 type Filter = "all" | "active" | "completed";
 
 export const TaskManager = () => {
-    const { tasks, addTask, toggleTask, removeTask, editTask, isClient } = useTaskStore();
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<Filter>("all");
 
-    // Filtered tasks
-    const filteredTasks: Task[] = tasks.filter((task) => {
+    // Fetch tasks on mount
+    useEffect(() => {
+        fetch("/api/tasks")
+            .then((res) => res.json())
+            .then((data) => {
+                setTasks(data);
+                setIsLoading(false);
+            });
+    }, []);
+
+    const addTask = async (title: string) => {
+        const res = await fetch("/api/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title }),
+        });
+        const newTask = await res.json();
+        setTasks((prev) => [...prev, newTask]);
+    };
+
+    const toggleTask = async (id: string) => {
+        const task = tasks.find((t) => t.id === id);
+        if (!task) return;
+        const res = await fetch(`/api/tasks/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed: !task.completed }),
+        });
+        const updated = await res.json();
+        setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    };
+
+    const editTask = async (id: string, title: string) => {
+        const res = await fetch(`/api/tasks/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title }),
+        });
+        const updated = await res.json();
+        setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    };
+
+    const removeTask = async (id: string) => {
+        await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+        setTasks((prev) => prev.filter((t) => t.id !== id));
+    };
+
+    const filteredTasks = tasks.filter((task) => {
         if (filter === "active") return !task.completed;
         if (filter === "completed") return task.completed;
         return true;
     });
 
-    // Calculate task stats
     const total = tasks.length;
     const active = tasks.filter((t) => !t.completed).length;
     const completed = tasks.filter((t) => t.completed).length;
@@ -29,42 +74,32 @@ export const TaskManager = () => {
         <>
             <AddTaskForm addTask={addTask} />
 
-            {/* Filter buttons */}
             <div className="flex gap-2 mb-2">
-                <button
-                    onClick={() => setFilter("all")}
-                    className={`px-3 py-1 rounded ${filter === "all" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-                        }`}
-                >
-                    All
-                </button>
-                <button
-                    onClick={() => setFilter("active")}
-                    className={`px-3 py-1 rounded ${filter === "active" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-                        }`}
-                >
-                    Active
-                </button>
-                <button
-                    onClick={() => setFilter("completed")}
-                    className={`px-3 py-1 rounded ${filter === "completed" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-                        }`}
-                >
-                    Completed
-                </button>
+                {(["all", "active", "completed"] as const).map((f) => (
+                    <button
+                        key={f}
+                        onClick={() => setFilter(f)}
+                        className={`px-3 py-1 rounded ${filter === f ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                            }`}
+                    >
+                        {f[0].toUpperCase() + f.slice(1)}
+                    </button>
+                ))}
             </div>
 
-            {/* Task counter */}
             <TaskStats total={total} active={active} completed={completed} />
 
-            {/* Task list */}
-            <TaskList
-                tasks={filteredTasks}
-                toggleTask={toggleTask}
-                removeTask={removeTask}
-                editTask={editTask}
-                isClient={isClient}
-            />
+            {isLoading ? (
+                <p className="text-gray-500 italic">Loading tasks...</p>
+            ) : (
+                <TaskList
+                    tasks={filteredTasks}
+                    toggleTask={toggleTask}
+                    removeTask={removeTask}
+                    editTask={editTask}
+                    isClient={true}
+                />
+            )}
         </>
     );
 };
