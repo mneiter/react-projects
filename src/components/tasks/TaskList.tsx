@@ -51,7 +51,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
                         <input
                             type="checkbox"
                             checked={task.completed}
-                            onChange={() => toggleTask(task.id)}
+                            onChange={() => toggleTask(task.id)} // ← здесь task.id должен быть определён
                             className="accent-blue-500"
                         />
 

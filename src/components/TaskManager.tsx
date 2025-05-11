@@ -36,14 +36,17 @@ export const TaskManager = () => {
     const toggleTask = async (id: string) => {
         const task = tasks.find((t) => t.id === id);
         if (!task) return;
+
         const res = await fetch(`/api/tasks/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ completed: !task.completed }),
         });
+
         const updated = await res.json();
         setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     };
+
 
     const editTask = async (id: string, title: string) => {
         const res = await fetch(`/api/tasks/${id}`, {
