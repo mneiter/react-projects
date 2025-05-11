@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { tasks } from '../route'; // импорт задач из основного списка
+import { tasks } from '../route';
 
 export async function PATCH(req: Request, context: { params: { id: string } }) {
   const { id } = context.params;
