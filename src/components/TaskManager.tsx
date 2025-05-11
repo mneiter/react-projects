@@ -10,7 +10,7 @@ import { TaskStats } from "./tasks/TaskStats";
 type Filter = "all" | "active" | "completed";
 
 export const TaskManager = () => {
-    const { tasks, addTask, toggleTask, removeTask, isClient } = useTaskStore();
+    const { tasks, addTask, toggleTask, removeTask, editTask, isClient } = useTaskStore();
     const [filter, setFilter] = useState<Filter>("all");
 
     // Filtered tasks
@@ -62,6 +62,7 @@ export const TaskManager = () => {
                 tasks={filteredTasks}
                 toggleTask={toggleTask}
                 removeTask={removeTask}
+                editTask={editTask}
                 isClient={isClient}
             />
         </>

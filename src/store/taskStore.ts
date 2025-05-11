@@ -50,11 +50,20 @@ export function useTaskStore() {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
+  const editTask = (id: string, newTitle: string) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, title: newTitle.trim() } : task
+      )
+    );
+  };
+
   return {
     tasks,
     addTask,
     toggleTask,
     removeTask,
+    editTask,
     isClient, // <- return this flag for conditional rendering
   };
 }
