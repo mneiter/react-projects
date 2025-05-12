@@ -20,6 +20,37 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Attach to FastAPI in Docker",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                "localRoot": "${workspaceFolder}/backend/app",
+                "remoteRoot": "/app/app"
+                }
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Debug FastAPI",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/.venv/bin/uvicorn",
+            "args": [
+                "app.main:app",
+                "--host", "127.0.0.1",
+                "--port", "8000",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal",
+            "justMyCode": true
+            },
+        {
             "name": "Attach",
             "port": 9229,
             "request": "attach",
