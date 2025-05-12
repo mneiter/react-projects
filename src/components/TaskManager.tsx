@@ -6,16 +6,14 @@ import { AddTaskForm } from "./tasks/AddTaskForm";
 import { TaskList } from "./tasks/TaskList";
 import { TaskStats } from "./tasks/TaskStats";
 
-type Filter = "all" | "active" | "completed";
-
 export const TaskManager = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<Filter>("all");
+    const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
 
-    // Fetch tasks on mount
+    // Load tasks from FastAPI backend
     useEffect(() => {
-        fetch("/api/tasks")
+        fetch("http://localhost:8000/tasks")
             .then((res) => res.json())
             .then((data) => {
                 setTasks(data);
@@ -23,8 +21,9 @@ export const TaskManager = () => {
             });
     }, []);
 
+    // Create a new task
     const addTask = async (title: string) => {
-        const res = await fetch("/api/tasks", {
+        const res = await fetch("http://localhost:8000/tasks", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title }),
@@ -33,11 +32,12 @@ export const TaskManager = () => {
         setTasks((prev) => [...prev, newTask]);
     };
 
+    // Toggle task completed status
     const toggleTask = async (id: string) => {
         const task = tasks.find((t) => t._id === id);
         if (!task) return;
 
-        const res = await fetch(`/api/tasks/${id}`, {
+        const res = await fetch(`http://localhost:8000/tasks/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ completed: !task.completed }),
@@ -47,9 +47,9 @@ export const TaskManager = () => {
         setTasks((prev) => prev.map((t) => (t._id === id ? updated : t)));
     };
 
-
+    // Edit task title
     const editTask = async (id: string, title: string) => {
-        const res = await fetch(`/api/tasks/${id}`, {
+        const res = await fetch(`http://localhost:8000/tasks/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title }),
@@ -58,8 +58,9 @@ export const TaskManager = () => {
         setTasks((prev) => prev.map((t) => (t._id === id ? updated : t)));
     };
 
+    // Delete a task
     const removeTask = async (id: string) => {
-        await fetch(`/api/tasks/${id}`, { method: "DELETE" });
+        await fetch(`http://localhost:8000/tasks/${id}`, { method: "DELETE" });
         setTasks((prev) => prev.filter((t) => t._id !== id));
     };
 
