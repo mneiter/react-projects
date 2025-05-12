@@ -2,10 +2,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Task } from '@/models/Task';
 import { NextResponse } from 'next/server';
 
-// PATCH /api/tasks?id=abc123
-export async function PATCH(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get('id');
+// PATCH /api/tasks/[id]
+export async function PATCH(req: Request, context: { params: { id: string } }) {
+  const id = context.params.id;
 
   if (!id) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
@@ -31,10 +30,12 @@ export async function PATCH(req: Request) {
   }
 }
 
-// DELETE /api/tasks?id=abc123
-export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get('id');
+// DELETE /api/tasks/[id]
+export async function DELETE(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const id = context.params.id;
 
   if (!id) {
     return NextResponse.json({ error: 'Missing ID' }, { status: 400 });

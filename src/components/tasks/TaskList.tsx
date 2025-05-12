@@ -24,7 +24,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
     }
 
     const handleEditStart = (task: Task) => {
-        setEditingId(task.id);
+        setEditingId(task._id);
         setEditedTitle(task.title);
     };
 
@@ -44,18 +44,18 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
         <ul className="space-y-2">
             {tasks.map((task) => (
                 <li
-                    key={task.id}
+                    key={task._id}
                     className="flex items-center justify-between p-2 border rounded"
                 >
                     <div className="flex items-center gap-2 w-full">
                         <input
                             type="checkbox"
                             checked={task.completed}
-                            onChange={() => toggleTask(task.id)} // ← здесь task.id должен быть определён
+                            onChange={() => toggleTask(task._id)} // ← здесь task.id должен быть определён
                             className="accent-blue-500"
                         />
 
-                        {editingId === task.id ? (
+                        {editingId === task._id ? (
                             <input
                                 value={editedTitle}
                                 onChange={(e) => setEditedTitle(e.target.value)}
@@ -74,7 +74,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
                         )}
                     </div>
                     <button
-                        onClick={() => removeTask(task.id)}
+                        onClick={() => removeTask(task._id)}
                         className="text-red-500 hover:text-red-700"
                         title="Delete task"
                     >

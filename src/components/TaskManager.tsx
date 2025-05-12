@@ -34,7 +34,7 @@ export const TaskManager = () => {
     };
 
     const toggleTask = async (id: string) => {
-        const task = tasks.find((t) => t.id === id);
+        const task = tasks.find((t) => t._id === id);
         if (!task) return;
 
         const res = await fetch(`/api/tasks/${id}`, {
@@ -44,7 +44,7 @@ export const TaskManager = () => {
         });
 
         const updated = await res.json();
-        setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+        setTasks((prev) => prev.map((t) => (t._id === id ? updated : t)));
     };
 
 
@@ -55,12 +55,12 @@ export const TaskManager = () => {
             body: JSON.stringify({ title }),
         });
         const updated = await res.json();
-        setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+        setTasks((prev) => prev.map((t) => (t._id === id ? updated : t)));
     };
 
     const removeTask = async (id: string) => {
         await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-        setTasks((prev) => prev.filter((t) => t.id !== id));
+        setTasks((prev) => prev.filter((t) => t._id !== id));
     };
 
     const filteredTasks = tasks.filter((task) => {
