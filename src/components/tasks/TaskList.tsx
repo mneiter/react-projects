@@ -1,9 +1,10 @@
 "use client";
 
 import { Task } from "@/types/task";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-interface Props {
+
+interface TaskListProps {
     tasks: Task[];
     toggleTask: (id: string) => void;
     removeTask: (id: string) => void;
@@ -11,7 +12,13 @@ interface Props {
     isClient: boolean;
 }
 
-export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: Props) => {
+export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: TaskListProps) => {
+    const endRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [tasks]);
+
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editedTitle, setEditedTitle] = useState("");
 
@@ -81,6 +88,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
                     </button>
                 </li>
             ))}
+            <div ref={endRef} /> {/* This is the invisible element we scroll to */}
         </ul>
     );
 };
