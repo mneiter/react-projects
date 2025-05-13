@@ -102,6 +102,7 @@ export const TaskManager = () => {
                     removeTask={removeTask}
                     editTask={editTask}
                     isClient={true}
+                    filter={filter}
                 />
             )}
         </>

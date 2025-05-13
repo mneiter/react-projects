@@ -1,8 +1,7 @@
 "use client";
 
 import { Task } from "@/types/task";
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface TaskListProps {
     tasks: Task[];
@@ -10,14 +9,24 @@ interface TaskListProps {
     removeTask: (id: string) => void;
     editTask: (id: string, newTitle: string) => void;
     isClient: boolean;
+    filter: "all" | "active" | "completed";
 }
 
-export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: TaskListProps) => {
+export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient, filter }: TaskListProps) => {
     const endRef = useRef<HTMLDivElement | null>(null);
+
+    // Memoize filtered task list based on current filter
+    const filteredTasks = useMemo(() => {
+        return tasks.filter((task) => {
+            if (filter === "active") return !task.completed;
+            if (filter === "completed") return task.completed;
+            return true;
+        });
+    }, [tasks, filter]);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [tasks]);
+    }, [filteredTasks]);
 
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editedTitle, setEditedTitle] = useState("");
@@ -49,7 +58,7 @@ export const TaskList = ({ tasks, toggleTask, removeTask, editTask, isClient }: 
 
     return (
         <ul className="space-y-2">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
                 <li key={task.id}
                     className="flex items-center justify-between p-2 border rounded"
                 >
