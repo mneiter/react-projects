@@ -20,6 +20,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Run (Next.js)",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": [],
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
             "name": "Attach to FastAPI in Docker",
             "type": "python",
             "request": "attach",

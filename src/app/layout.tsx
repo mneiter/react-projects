@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/Header";
 import { ReactNode } from "react";
+import { ThemeProvider } from "./../context/ThemeContext"; // Import the ThemeProvider from context
 import "./../styles/globals.css"; // Import global styles
+
 
 export const metadata = {
   title: "Task Manager",
@@ -17,7 +19,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         {/* Main content container */}
         <main className="max-w-2xl mx-auto py-8 px-4">
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </main>
       </body>
     </html>
