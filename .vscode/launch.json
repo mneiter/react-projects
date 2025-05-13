@@ -49,27 +49,6 @@
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "justMyCode": true
-            },
-        {
-            "name": "Attach",
-            "port": 9229,
-            "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}\\src\\app\\login\\page.tsx",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
         }
     ]
 }
