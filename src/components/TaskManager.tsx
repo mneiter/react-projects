@@ -2,7 +2,14 @@
 
 import { Task } from "@/types/task";
 import { useEffect, useState } from "react";
+import {
+    createTask,
+    deleteTask,
+    fetchTasks,
+    updateTask,
+} from "./../sevicies/tasksService";
 import { AddTaskForm } from "./tasks/AddTaskForm";
+import { FilterButtons } from "./tasks/FilterButtons";
 import { TaskList } from "./tasks/TaskList";
 import { TaskStats } from "./tasks/TaskStats";
 
@@ -11,56 +18,34 @@ export const TaskManager = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
 
-    // Load tasks from FastAPI backend
     useEffect(() => {
-        fetch("http://localhost:8000/tasks")
-            .then((res) => res.json())
-            .then((data) => {
-                setTasks(data);
-                setIsLoading(false);
-            });
+        const loadTasks = async () => {
+            const data = await fetchTasks();
+            setTasks(data);
+            setIsLoading(false);
+        };
+        loadTasks();
     }, []);
 
-    // Create a new task
     const addTask = async (title: string) => {
-        const res = await fetch("http://localhost:8000/tasks", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title }),
-        });
-        const newTask = await res.json();
+        const newTask = await createTask(title);
         setTasks((prev) => [...prev, newTask]);
     };
 
-    // Toggle task completed status
     const toggleTask = async (id: string) => {
         const task = tasks.find((t) => t.id === id);
         if (!task) return;
-
-        const res = await fetch(`http://localhost:8000/tasks/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ completed: !task.completed }),
-        });
-
-        const updated = await res.json();
+        const updated = await updateTask(id, { completed: !task.completed });
         setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     };
 
-    // Edit task title
     const editTask = async (id: string, title: string) => {
-        const res = await fetch(`http://localhost:8000/tasks/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title }),
-        });
-        const updated = await res.json();
+        const updated = await updateTask(id, { title });
         setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     };
 
-    // Delete a task
     const removeTask = async (id: string) => {
-        await fetch(`http://localhost:8000/tasks/${id}`, { method: "DELETE" });
+        await deleteTask(id);
         setTasks((prev) => prev.filter((t) => t.id !== id));
     };
 
@@ -70,28 +55,11 @@ export const TaskManager = () => {
         return true;
     });
 
-    const total = tasks.length;
-    const active = tasks.filter((t) => !t.completed).length;
-    const completed = tasks.filter((t) => t.completed).length;
-
     return (
         <>
             <AddTaskForm addTask={addTask} />
-
-            <div className="flex gap-2 mb-2">
-                {(["all", "active", "completed"] as const).map((f) => (
-                    <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={`px-3 py-1 rounded ${filter === f ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-                            }`}
-                    >
-                        {f[0].toUpperCase() + f.slice(1)}
-                    </button>
-                ))}
-            </div>
-
-            <TaskStats total={total} active={active} completed={completed} />
+            <FilterButtons filter={filter} setFilter={setFilter} />
+            <TaskStats tasks={tasks} />
 
             {isLoading ? (
                 <p className="text-gray-500 italic">Loading tasks...</p>
