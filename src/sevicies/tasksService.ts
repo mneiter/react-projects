@@ -18,11 +18,14 @@ export const updateTask = async (
   id: string,
   updates: Partial<{ title: string; completed: boolean }>
 ) => {
+  console.log('Updating task with ID:', id, 'with updates:', updates);
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
   });
+  console.log('Response status:', res.status);
+  console.log('Response data:', await res.clone().json());
   return res.json();
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Task } from "@/types/task";
+import { logger } from "@/utils/logger";
 import { useEffect, useState } from "react";
 import {
     createTask,
@@ -13,6 +14,7 @@ import { FilterButtons } from "./tasks/FilterButtons";
 import { TaskList } from "./tasks/TaskList";
 import { TaskStats } from "./tasks/TaskStats";
 
+
 export const TaskManager = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +23,13 @@ export const TaskManager = () => {
     useEffect(() => {
         const loadTasks = async () => {
             const data = await fetchTasks();
+
+            logger.log("Fetched tasks:", data);
+            if (!Array.isArray(data)) {
+                logger.error("Invalid data format:", data);
+                setIsLoading(false);
+                return;
+            }
             setTasks(data);
             setIsLoading(false);
         };
@@ -28,14 +37,26 @@ export const TaskManager = () => {
     }, []);
 
     const addTask = async (title: string) => {
-        const newTask = await createTask(title);
-        setTasks((prev) => [...prev, newTask]);
+        logger.log("Adding new task with title:", title);
+        try {
+            const newTask = await createTask(title);
+            logger.log("New task created:", newTask);
+            setTasks((prev) => [...prev, newTask]);
+        } catch (error) {
+            logger.error("Error creating task:", error);
+        }
     };
 
     const toggleTask = async (id: string) => {
         const task = tasks.find((t) => t.id === id);
-        if (!task) return;
-        const updated = await updateTask(id, { completed: !task.completed });
+        if (!task) {
+            logger.warn(`Task with id ${id} not found.`);
+            return;
+        }
+        logger.log(`Toggling task with id ${id}. Current state:`, task);
+        task.completed = !task.completed;
+        const updated = await updateTask(id, task);
+        logger.log(`Task with id ${id} updated. New state:`, updated);
         setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     };
 
