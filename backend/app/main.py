@@ -1,12 +1,8 @@
 import os
-import logging
-
-logger = logging.basicConfig(level=logging.INFO)
 
 if os.getenv("IN_DOCKER") == "1":
     import debugpy
     debugpy.listen(("0.0.0.0", 5678))
-    logger.info("IN_DOCKER environment variable is set: %s", os.getenv("IN_DOCKER"))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
