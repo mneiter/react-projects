@@ -39,3 +39,52 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 👉 Python cache
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 👉 Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# 👉 VSCode
+.vscode/
+
+# 👉 dotenv / конфигурации
+.env
+.env.local
+.env.*.local
+
+# 👉 Logs
+*.log
+logs/
+
+# 👉 OS/Editor system files
+.DS_Store
+Thumbs.db
+
+# 👉 Jupyter (если используешь)
+.ipynb_checkpoints
+
+# 👉 Docker
+*.pid
+*.pid.lock
+docker-compose.override.yml
+
+# 👉 Coverage / Test
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+
+# 👉 FastAPI OpenAPI generated
+openapi.json
