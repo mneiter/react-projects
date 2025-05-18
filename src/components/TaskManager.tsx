@@ -48,9 +48,8 @@ export const TaskManager = () => {
         if (!task) return;
 
         try {
-            const updated = await updateTask(id, {
-                completed: !task.completed,
-            });
+            task.completed = !task.completed
+            const updated = await updateTask(id, task);
             setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (err) {
             console.error("[handleToggleTask] Error:", err);
@@ -62,9 +61,8 @@ export const TaskManager = () => {
         if (!task) return;
 
         try {
-            const updated = await updateTask(id, {
-                title: title,
-            });
+            task.title = title
+            const updated = await updateTask(id, task);
             setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (err) {
             console.error("[handleEditTask] Error:", err);
