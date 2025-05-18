@@ -1,18 +1,13 @@
 "use client";
 
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuth } from "./../../context/AuthContext";
+
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export const Header = () => {
     const pathname = usePathname();
-    const router = useRouter();
-    const { isLoggedIn, logout } = useAuthStore();
-
-    const handleLogout = () => {
-        logout();
-        router.push("/");
-    };
+    const { isAuthenticated, logout } = useAuth();
 
     return (
         <header className="bg-blue-600 text-white shadow-md">
@@ -28,17 +23,26 @@ export const Header = () => {
                         Tasks
                     </Link>
                 </div>
-                <div>
-                    {isLoggedIn ? (
-                        <button onClick={handleLogout} className="hover:underline">
-                            Logout
-                        </button>
+                <nav className="flex items-center gap-4">
+                    {isAuthenticated ? (
+                        <>
+                            <span className="text-sm text-gray-300">Logged in</span>
+                            <button
+                                onClick={logout}
+                                className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition"
+                            >
+                                Logout
+                            </button>
+                        </>
                     ) : (
-                        <Link href="/login" className="hover:underline">
+                        <Link
+                            href="/login"
+                            className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 transition"
+                        >
                             Login
                         </Link>
                     )}
-                </div>
+                </nav>
             </nav>
         </header>
     );

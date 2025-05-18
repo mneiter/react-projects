@@ -1,11 +1,24 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 
 export default function HomePage() {
     const { theme, toggleTheme } = useTheme();
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push("/login");
+        }
+    }, [isAuthenticated, router]);
+
+    if (!isAuthenticated) return null;
 
     return (
         <div className="space-y-4">

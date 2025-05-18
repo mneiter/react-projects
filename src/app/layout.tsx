@@ -1,7 +1,11 @@
+import { RequireAuth } from "@/components/auth/RequireAuth";
 import { Header } from "@/components/layout/Header";
+import { AuthProvider } from "@/context/AuthContext"; // Import the AuthProvider from context
 import { ReactNode } from "react";
 import { ThemeProvider } from "./../context/ThemeContext"; // Import the ThemeProvider from context
+
 import "./../styles/globals.css"; // Import global styles
+
 
 
 export const metadata = {
@@ -14,16 +18,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="bg-gray-100 text-gray-900 min-h-screen">
-        {/* Navigation header displayed on all pages */}
-        <Header />
+
 
         {/* Main content container */}
         <main className="max-w-2xl mx-auto py-8 px-4">
           <ThemeProvider>
-            {children}
+            <AuthProvider>
+              <Header />
+              <RequireAuth>
+                {children}
+              </RequireAuth>
+            </AuthProvider>
           </ThemeProvider>
         </main>
       </body>
-    </html>
+    </html >
   );
 }
