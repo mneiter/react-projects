@@ -14,7 +14,7 @@ export default function TasksPage() {
     if (isClient && !isLoggedIn) {
       router.push("/login");
     }
-  }, [isLoggedIn, isClient]);
+  }, [isLoggedIn, isClient, router]);
 
   // Don't render anything until we know if we're logged in
   if (!isClient) return null;
