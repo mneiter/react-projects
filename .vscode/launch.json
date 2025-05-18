@@ -31,28 +31,16 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Run (Next.js)",
-            "type": "node",
-            "request": "launch",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "dev"],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "skipFiles": [],
-            "internalConsoleOptions": "neverOpen"
-        },
-        {
-            "name": "Run FastAPI via Uvicorn",
+            "name": "Run FastAPI (uvicorn)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/venv/Scripts/uvicorn.exe", // или просто "uvicorn" если он глобально доступен
+            "program": "${workspaceFolder}/backend/.venv/Scripts/uvicorn.exe",
             "args": [
                 "app.main:app",
                 "--reload"
             ],
-            "cwd": "${workspaceFolder}/backend", // папка, где находится app/
-            "console": "integratedTerminal",
-            "justMyCode": true
+            "cwd": "${workspaceFolder}/backend",
+            "console": "integratedTerminal"
         },
         {
             "name": "Attach to FastAPI in Docker",
@@ -68,21 +56,6 @@
                 "remoteRoot": "/app/app"
                 }
             ],
-            "justMyCode": true
-        },
-        {
-            "name": "Debug FastAPI",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/.venv/bin/uvicorn",
-            "args": [
-                "app.main:app",
-                "--host", "127.0.0.1",
-                "--port", "8000",
-                "--reload"
-            ],
-            "cwd": "${workspaceFolder}/backend",
-            "console": "integratedTerminal",
             "justMyCode": true
         }
     ]

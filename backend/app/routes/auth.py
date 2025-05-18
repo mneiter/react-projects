@@ -1,11 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel, EmailStr
+from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
+from app.database import get_database
+from pymongo.database import Database
 
 router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "your_secret_key_here"  # вынеси потом в .env
+SECRET_KEY = "your_secret_key_here"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -27,21 +31,37 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-@router.post("/auth/register", response_model=TokenResponse)
-def register_user(req: RegisterRequest):
-    # Здесь могла бы быть проверка в базе
-    if not req.password or len(req.password) < 4:
-        raise HTTPException(status_code=400, detail="Password too short")
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+def register_user(req: RegisterRequest, db: Database = Depends(get_database)):
+    users = db["users"]
+
+    # Проверка на существующий email
+    if users.find_one({"email": req.email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    hashed_password = pwd_context.hash(req.password)
+
+    new_user = {
+        "email": req.email,
+        "hashed_password": hashed_password,
+        "created_at": datetime.utcnow()
+    }
+
+    users.insert_one(new_user)
 
     token = create_access_token(data={"sub": req.email})
     return {"access_token": token, "token_type": "bearer"}
 
-@router.post("/auth/login", response_model=TokenResponse)
-def login_user(req: LoginRequest):
-    if not req.email or not req.password:
-        raise HTTPException(status_code=400, detail="Missing credentials")
+@router.post("/login", response_model=TokenResponse)
+def login_user(req: LoginRequest, db: Database = Depends(get_database)):
+    users = db["users"]
 
-    # Здесь могла бы быть проверка в MongoDB
-    # Пока разрешаем вход всем, кто ввёл email и password
+    user = users.find_one({"email": req.email})
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    if not pwd_context.verify(req.password, user["hashed_password"]):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
     token = create_access_token(data={"sub": req.email})
     return {"access_token": token, "token_type": "bearer"}
