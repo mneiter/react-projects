@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧾 Task Manager Project Summary (React + FastAPI + MongoDB)
 
-## Getting Started
+## 📦 Technologies
 
-First, run the development server:
+- **Frontend**: Next.js (App Router), React, TypeScript, TailwindCSS
+- **Backend**: FastAPI (Python), MongoDB via `motor`
+- **Database**: MongoDB (Docker with volume)
+- **State Management**: `useState`, `useMemo`, `useRef`
+- **Debugging**: VSCode + `debugpy` (port 5678)
+
+---
+
+## 🐳 Docker
+
+- Uses `docker-compose.yml` with `.env` support
+- Backend loads environment variables via `python-dotenv`
+- Backend run command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+uvicorn app.main:app --reload
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🐍 Backend Structure (FastAPI)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+backend/
+├── app/
+│   ├── main.py             # FastAPI entry point
+│   ├── database.py         # MongoDB connection with `motor`
+│   ├── models.py           # Pydantic models
+│   └── routes/
+│       └── tasks.py        # Task routes (CRUD)
+├── requirements.txt
+├── Dockerfile
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🌐 Frontend Structure (Next.js)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── login/page.tsx      # Login form (planned for JWT)
+│   ├── tasks/page.tsx      # Task manager page
+│   └── api/tasks/          # API route structure
+├── components/
+│   ├── TaskManager.tsx     # Root task component
+│   ├── layout/Header.tsx   # Layout header
+│   └── tasks/              # Task-related UI components
+├── context/ThemeContext.tsx
+├── lib/mongodb.ts          # DB utility (if needed for SSR)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✅ Resolved Issues
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `bcrypt` AttributeError:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  ```bash
+  pip install bcrypt==4.0.1
+  ```
+
+- `ModuleNotFoundError: No module named 'app'` — resolved by running `uvicorn` from inside `backend/`
+
+---
+
+## ⏭️ Next Steps
+
+- 🔐 Implement **JWT Authentication** in `auth.py`, `auth_routes.py`
+- 🔑 Secure task routes with authentication
+- 🧠 Store JWT tokens in `localStorage` or `HttpOnly` cookies
+- 📥 Enable login via `/login` (frontend)
+- 🧪 Refactor state logic with `useReducer`
+- ♻️ Persist `filter`, `tasks` state in `localStorage`
+
+---
+
+## 🧠 Resume in Chat
+
+Say this:
+
+> "I have a Task Manager project using FastAPI + MongoDB + Next.js. JWT is not implemented yet. We stopped after setting up backend routes and resolving import issues."
