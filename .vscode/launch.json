@@ -42,6 +42,19 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
+            "name": "Run FastAPI via Uvicorn",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/venv/Scripts/uvicorn.exe", // или просто "uvicorn" если он глобально доступен
+            "args": [
+                "app.main:app",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/backend", // папка, где находится app/
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "Attach to FastAPI in Docker",
             "type": "python",
             "request": "attach",

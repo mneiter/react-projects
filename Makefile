@@ -95,3 +95,8 @@ compose-clean:
 compose-rebuild:
 	docker compose up --build -d
 
+
+compose-full-rebuild:
+	docker compose down --remove-orphans
+	docker compose build --no-cache
+	docker compose up --force-recreate

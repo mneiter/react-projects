@@ -1,10 +1,15 @@
-import debugpy
-debugpy.listen(("0.0.0.0", 5678))  # Открываем порт для отладчика
-print("✅ Debugger is listening on port 5678")
+import os
+
+if os.getenv("IN_DOCKER") == "1":
+    import debugpy
+    debugpy.listen(("0.0.0.0", 5678))
+    print("✅ Debugger is listening on port 5678")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.tasks import router as task_router
+from app.routes.auth import router as auth_router
+
 
 app = FastAPI()
 
@@ -18,3 +23,7 @@ app.add_middleware(
 )
 
 app.include_router(task_router, prefix="/tasks", tags=["tasks"])
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Task Manager API!"}
