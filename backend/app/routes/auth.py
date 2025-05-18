@@ -9,7 +9,7 @@ from pymongo.database import Database
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "your_secret_key_here"
+SECRET_KEY = "super_secret_jwt_key_123"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
