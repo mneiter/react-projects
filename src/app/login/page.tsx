@@ -8,8 +8,8 @@ export default function LoginPage() {
     const router = useRouter();
     const { isAuthenticated, login } = useAuth(); // добавим login
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("user@example.com");
+    const [password, setPassword] = useState("1234");
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -73,6 +73,15 @@ export default function LoginPage() {
                 >
                     Login
                 </button>
+                <p className="text-sm text-gray-600">
+                    Don’t have an account?{" "}
+                    <a
+                        href="/register"
+                        className="text-blue-600 hover:underline font-medium"
+                    >
+                        Register
+                    </a>
+                </p>
             </form>
         </div>
     );

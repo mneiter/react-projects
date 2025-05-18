@@ -8,8 +8,8 @@ export default function RegisterPage() {
     const { isAuthenticated, login } = useAuth();
     const router = useRouter();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("user@example.com");
+    const [password, setPassword] = useState("1234");
     const [error, setError] = useState("");
 
     // 🔁 Перенаправление, если уже вошли
