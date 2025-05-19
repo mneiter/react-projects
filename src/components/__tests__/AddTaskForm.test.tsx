@@ -6,7 +6,7 @@ describe("AddTaskForm", () => {
         const handleAdd = jest.fn();
 
         render(<AddTaskForm addTask={handleAdd} />);
-        const input = screen.getByPlaceholderText(/enter a task/i);
+        const input = screen.getByPlaceholderText(/enter task/i);
         const button = screen.getByText(/add/i);
 
         fireEvent.change(input, { target: { value: "Buy milk" } });

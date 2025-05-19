@@ -1,13 +1,13 @@
 "use client";
 
-import { Task } from "@/types/task";
-import { useEffect, useState } from "react";
 import {
     createTask,
     deleteTask,
     getTasks,
     updateTask,
-} from "./../sevicies/tasksService";
+} from "@/sevicies/tasksService";
+import { Task } from "@/types/task";
+import { useEffect, useState } from "react";
 import { AddTaskForm } from "./tasks/AddTaskForm";
 import { FilterButtons } from "./tasks/FilterButtons";
 import { TaskList } from "./tasks/TaskList";

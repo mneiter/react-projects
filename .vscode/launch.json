@@ -35,7 +35,7 @@
         },
         {
             "name": "Run FastAPI (uvicorn)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/backend/.venv/Scripts/uvicorn.exe",
             "args": [
@@ -47,7 +47,7 @@
         },
         {
             "name": "Attach to FastAPI in Docker",
-            "type": "python",
+            "type": "debugpy",
             "request": "attach",
             "connect": {
                 "host": "localhost",
