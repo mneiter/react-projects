@@ -1,10 +1,52 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-         {
+  "version": "0.2.0",
+  "configurations": [
+        {
+            "type": "node",
+            "name": "Debug Jest (direct)",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+            "args": [
+                "--runInBand",
+                "--config",
+                "jest.config.mjs"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "env": {
+                "NODE_ENV": "test"
+            }
+        }, 
+        {
+            "type": "node",
+            "name": "Debug Jest Test",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--config",
+                "jest.config.mjs"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "skipFiles": ["<node_internals>/**"],
+            "env": {
+                "NODE_ENV": "test"
+            }
+        },
+        {
+            "name": "Next.js: Debug client-side",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "trace": true,
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
             "name": "Next.js: Debug server-side",
             "type": "pwa-node",
             "request": "launch",
