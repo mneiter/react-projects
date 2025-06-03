@@ -50,6 +50,8 @@ __pycache__/
 *$py.class
 
 # 👉 Virtual environments
+backend/venv/
+backend/.venv/
 .venv/
 venv/
 ENV/
