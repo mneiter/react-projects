@@ -6,7 +6,7 @@
 
 help:
 	@echo ""
-	@echo "📘 Makefile commands:"
+	@echo "	Makefile commands:"
 	@echo "  make install         - Install Python dependencies"
 	@echo "  make dev             - Run FastAPI app locally"
 	@echo "  make test            - Run pytest tests"
@@ -37,7 +37,7 @@ clean:
 	del /s /q .pytest_cache
 
 # ============================================
-# 🧰 Full Code Cleanup: lint → format → clean
+# Full Code Cleanup: lint → format → clean
 # ============================================
 
 check:

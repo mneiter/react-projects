@@ -11,11 +11,6 @@ from app.routes.auth import router as auth_router
 load_dotenv()
 logger = setup_logger("main")
 
-logger.debug("This is debug")
-logger.info("App started")
-logger.warning("This is a warning")
-logger.error("An error occurred")
-
 # === Debugging inside Docker ===
 if os.getenv("IN_DOCKER") == "1":
     import debugpy
