@@ -14,17 +14,21 @@ SECRET_KEY = "super_secret_jwt_key_123"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
 
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -32,7 +36,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED
+)
 def register_user(req: RegisterRequest, db: Database = Depends(get_database)):
     users = db["users"]
 
@@ -45,13 +52,14 @@ def register_user(req: RegisterRequest, db: Database = Depends(get_database)):
     new_user = {
         "email": req.email,
         "hashed_password": hashed_password,
-        "created_at": datetime.utcnow()
+        "created_at": datetime.utcnow(),
     }
 
     users.insert_one(new_user)
 
     token = create_access_token(data={"sub": req.email})
     return {"access_token": token, "token_type": "bearer"}
+
 
 @router.post("/login", response_model=TokenResponse)
 def login_user(req: LoginRequest, db: Database = Depends(get_database)):
@@ -67,10 +75,15 @@ def login_user(req: LoginRequest, db: Database = Depends(get_database)):
     token = create_access_token(data={"sub": req.email})
     return {"access_token": token, "token_type": "bearer"}
 
+
 # === Login for Swagger UI (OAuth2 Password Flow) ===
 
+
 @router.post("/token", response_model=TokenResponse)
-def login_with_oauth(form_data: OAuth2PasswordRequestForm = Depends(), db: Database = Depends(get_database)):
+def login_with_oauth(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Database = Depends(get_database),
+):
     users = db["users"]
     user = users.find_one({"email": form_data.username})
     if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
@@ -82,10 +95,11 @@ def login_with_oauth(form_data: OAuth2PasswordRequestForm = Depends(), db: Datab
 
 # === Optional: Login via /auth/login (for Swagger fallback) ===
 
+
 @router.post("/login", response_model=TokenResponse)
 def login_alias(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Database = Depends(get_database)
+    db: Database = Depends(get_database),
 ):
     users = db["users"]
     user = users.find_one({"email": form_data.username})
