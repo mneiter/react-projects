@@ -19,18 +19,18 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@models/*": ["./src/models/*"],
-      "@sevicies/*": ["./src/sevicies/*"],      
-      "@pages/*": ["./src/pages/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"],      
+      "@/*": ["frontend/src/*"],
+      "@components/*": ["frontend/src/components/*"],
+      "@hooks/*": ["frontend/src/hooks/*"],
+      "@lib/*": ["frontend/src/lib/*"],
+      "@models/*": ["frontend/src/models/*"],
+      "@sevicies/*": ["frontend/src/sevicies/*"],      
+      "@pages/*": ["frontend/src/pages/*"],
+      "@styles/*": ["frontend/src/styles/*"],
+      "@types/*": ["frontend/src/types/*"],
+      "@utils/*": ["frontend/src/utils/*"],      
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["frontend/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["frontend/node_modules"]
 }

@@ -1,14 +1,16 @@
+include make/docker.mk
+
 # Makefile for managing a Next.js + FastAPI project
 
 # ─────────────── Frontend ───────────────
 
 # Run development server
 dev:
-	npm run dev
+	cd frontend && npm run dev
 
 # Build the project
 build:
-	npm run build
+	cd frontend && npm run build
 
 # Start production server (after build)
 start:
@@ -33,7 +35,7 @@ test:
 # ─────────────── Backend ───────────────
 
 # Run backend with reload (FastAPI)
-api:
+fastapi:
 	cd backend && uvicorn app.main:app --reload
 
 # Run backend tests (pytest)
@@ -53,20 +55,10 @@ reinstall: clean install
 stop:
 	@echo "To stop the server, press Ctrl+C in the terminal where it runs."
 
-# ─────────────── Docker ───────────────
 
-# Start all services
-compose-up:
-	docker compose up -d
+# --------------------------------------------
+# Help Menu
+# --------------------------------------------
 
-# Stop all services
-compose-down:
-	docker compose down
-
-# Stop and remove containers + volumes (data loss!)
-compose-clean:
-	docker compose down -v
-
-# Rebuild and restart all services
-compose-rebuild:
-	docker compose up --build -d
+help:
+	@echo ""
