@@ -5,6 +5,7 @@ from jose import jwt
 from datetime import datetime, timedelta
 from app.database import get_database
 from pymongo.database import Database
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -64,4 +65,32 @@ def login_user(req: LoginRequest, db: Database = Depends(get_database)):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_access_token(data={"sub": req.email})
+    return {"access_token": token, "token_type": "bearer"}
+
+# === Login for Swagger UI (OAuth2 Password Flow) ===
+
+@router.post("/token", response_model=TokenResponse)
+def login_with_oauth(form_data: OAuth2PasswordRequestForm = Depends(), db: Database = Depends(get_database)):
+    users = db["users"]
+    user = users.find_one({"email": form_data.username})
+    if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    token = create_access_token(data={"sub": form_data.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+# === Optional: Login via /auth/login (for Swagger fallback) ===
+
+@router.post("/login", response_model=TokenResponse)
+def login_alias(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Database = Depends(get_database)
+):
+    users = db["users"]
+    user = users.find_one({"email": form_data.username})
+    if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    token = create_access_token(data={"sub": form_data.username})
     return {"access_token": token, "token_type": "bearer"}
