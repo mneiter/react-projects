@@ -29,7 +29,7 @@ async def create_task(
     task_collection: Collection = Depends(get_task_collection),
 ) -> dict:
     try:
-        task_dict = task.dict()
+        task_dict = task.model_dump()
         task_dict["owner"] = current_user
         new_task = task_collection.insert_one(task_dict)
         created_task = task_collection.find_one({"_id": new_task.inserted_id})
@@ -51,7 +51,7 @@ async def update_task(
             raise HTTPException(status_code=404, detail="Task not found")
 
         task_collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": data.dict(exclude_unset=True)}
+            {"_id": ObjectId(id)}, {"$set": data.model_dump(exclude_unset=True)}
         )
         updated_task = task_collection.find_one({"_id": ObjectId(id)})
         return task_helper(updated_task)
