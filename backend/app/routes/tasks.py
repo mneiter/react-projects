@@ -13,7 +13,7 @@ router = APIRouter()
 async def get_tasks(
     current_user: str = Depends(get_current_user),
     task_collection: Collection = Depends(get_task_collection),
-):
+) -> list:
     try:
         tasks_cursor = task_collection.find({"owner": current_user})
         tasks = [task_helper(task) for task in tasks_cursor]
@@ -27,7 +27,7 @@ async def create_task(
     task: TaskModel,
     current_user: str = Depends(get_current_user),
     task_collection: Collection = Depends(get_task_collection),
-):
+) -> dict:
     try:
         task_dict = task.dict()
         task_dict["owner"] = current_user
@@ -44,7 +44,7 @@ async def update_task(
     data: UpdateTaskModel,
     current_user: str = Depends(get_current_user),
     task_collection: Collection = Depends(get_task_collection),
-):
+) -> dict:
     try:
         task = task_collection.find_one({"_id": ObjectId(id), "owner": current_user})
         if not task:
@@ -66,7 +66,7 @@ async def delete_task(
     id: str,
     current_user: str = Depends(get_current_user),
     task_collection: Collection = Depends(get_task_collection),
-):
+) -> dict:
     try:
         task = task_collection.find_one({"_id": ObjectId(id), "owner": current_user})
         if not task:

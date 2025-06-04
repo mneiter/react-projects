@@ -30,17 +30,19 @@ class LoginRequest(BaseModel):
     password: str
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return str(jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM))
 
 
 @router.post(
     "/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED
 )
-def register_user(req: RegisterRequest, db: Database = Depends(get_database)):
+def register_user(
+    req: RegisterRequest, db: Database = Depends(get_database)
+) -> TokenResponse:
     users = db["users"]
 
     # Проверка на существующий email
@@ -58,11 +60,13 @@ def register_user(req: RegisterRequest, db: Database = Depends(get_database)):
     users.insert_one(new_user)
 
     token = create_access_token(data={"sub": req.email})
-    return {"access_token": token, "token_type": "bearer"}
+    return TokenResponse(access_token=token, token_type="bearer")
 
 
 @router.post("/login", response_model=TokenResponse)
-def login_user(req: LoginRequest, db: Database = Depends(get_database)):
+def login_user(
+    req: LoginRequest, db: Database = Depends(get_database)
+) -> TokenResponse:
     users = db["users"]
 
     user = users.find_one({"email": req.email})
@@ -73,7 +77,7 @@ def login_user(req: LoginRequest, db: Database = Depends(get_database)):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_access_token(data={"sub": req.email})
-    return {"access_token": token, "token_type": "bearer"}
+    return TokenResponse(access_token=token, token_type="bearer")
 
 
 # === Login for Swagger UI (OAuth2 Password Flow) ===
@@ -83,14 +87,14 @@ def login_user(req: LoginRequest, db: Database = Depends(get_database)):
 def login_with_oauth(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Database = Depends(get_database),
-):
+) -> TokenResponse:
     users = db["users"]
     user = users.find_one({"email": form_data.username})
     if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_access_token(data={"sub": form_data.username})
-    return {"access_token": token, "token_type": "bearer"}
+    return TokenResponse(access_token=token, token_type="bearer")
 
 
 # === Optional: Login via /auth/login (for Swagger fallback) ===
@@ -100,11 +104,11 @@ def login_with_oauth(
 def login_alias(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Database = Depends(get_database),
-):
+) -> TokenResponse:
     users = db["users"]
     user = users.find_one({"email": form_data.username})
     if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_access_token(data={"sub": form_data.username})
-    return {"access_token": token, "token_type": "bearer"}
+    return TokenResponse(access_token=token, token_type="bearer")

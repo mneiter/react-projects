@@ -13,6 +13,7 @@ help:
 	@echo "  make lint            - Run flake8 linting"
 	@echo "  make format          - Auto-format code with black"
 	@echo "  make clean           - Delete __pycache__ and .pyc files"
+	@echo "  make mypy            - Run type checking with mypy"
 	@echo "  make check           - Run linting and formatting checks"
 	@echo ""
 
@@ -36,6 +37,9 @@ clean:
 	del /s /q __pycache__
 	del /s /q .pytest_cache
 
+mypy:
+	mypy app --config-file mypy.ini
+
 # ============================================
 # Full Code Cleanup: lint → format → clean
 # ============================================
@@ -46,6 +50,9 @@ check:
 
 	@echo "Running black..."
 	python -m black app
+
+	@echo "Running mypy..."
+	python -m mypy app --config-file mypy.ini || exit 1
 
 	@echo "Cleaning __pycache__ and .pyc files..."
 	del /s /q *.pyc 2>nul

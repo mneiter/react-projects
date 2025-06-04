@@ -1,6 +1,7 @@
 import os
+from typing import Awaitable, Callable
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from app.logger import setup_logger
@@ -36,14 +37,15 @@ app.add_middleware(
 
 # === Log every request ===
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
     logger.info(f"Incoming request: {request.method} {request.url}")
     response = await call_next(request)
     logger.info(f"Response status: {response.status_code}")
     return response
 
 
-# === Routers ===
 app.include_router(task_router, prefix="/tasks", tags=["tasks"])
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
@@ -51,11 +53,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 @app.get("/protected")
-def protected(token: str = Depends(oauth2_scheme)):
+def protected(token: str = Depends(oauth2_scheme)) -> dict:
     return {"message": "You are authenticated"}
 
 
 @app.get("/")
-async def root():
+async def root() -> dict:
     logger.info("Root endpoint called")
     return {"message": "Welcome to the Task Manager API!"}

@@ -12,7 +12,16 @@ class UpdateTaskModel(BaseModel):
     completed: Optional[bool] = None
 
 
-def task_helper(task: Dict[str, Any]) -> dict:
+class TaskResponse(BaseModel):
+    id: str
+    title: str
+    description: Optional[str]
+    is_done: Optional[bool] = False
+
+
+def task_helper(task: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if task is None:
+        raise ValueError("task_helper received None")
     return {
         "id": str(task.get("_id", "")),
         "title": task.get("title", ""),
