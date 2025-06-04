@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel, EmailStr
 from passlib.context import CryptContext
 from jose import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.database import get_database
 from pymongo.database import Database
 from fastapi.security import OAuth2PasswordRequestForm
@@ -32,7 +32,7 @@ class LoginRequest(BaseModel):
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return str(jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM))
 
@@ -54,7 +54,7 @@ def register_user(
     new_user = {
         "email": req.email,
         "hashed_password": hashed_password,
-        "created_at": datetime.utcnow(),
+        "created_at": datetime.now(timezone.utc),
     }
 
     users.insert_one(new_user)
