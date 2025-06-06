@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def setup_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
     try:
