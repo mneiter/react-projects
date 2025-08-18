@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function LoginPage() {
     const router = useRouter();
     const { isAuthenticated, login } = useAuth(); // добавим login
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     const [email, setEmail] = useState("user@example.com");
     const [password, setPassword] = useState("1234");
@@ -22,7 +23,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://localhost:8000/auth/login", {
+            const res = await fetch(`${API_BASE}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

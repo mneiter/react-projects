@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-    createTask,
-    deleteTask,
-    getTasks,
-    updateTask,
-} from "../sevicies/tasksService";
+import { createTask, deleteTask, getTasks, updateTask } from "../services/tasksService";
 import { Task } from "../types/task";
 import { AddTaskForm } from "./tasks/AddTaskForm";
 import { FilterButtons } from "./tasks/FilterButtons";
@@ -44,12 +39,11 @@ export const TaskManager = () => {
     };
 
     const handleToggleTask = async (id: string) => {
-        const task = tasks.find((t) => t.id === id);
-        if (!task) return;
+        const existing = tasks.find((t) => t.id === id);
+        if (!existing) return;
 
         try {
-            task.completed = !task.completed
-            const updated = await updateTask(id, task);
+            const updated = await updateTask(id, { completed: !existing.completed });
             setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (err) {
             console.error("[handleToggleTask] Error:", err);
@@ -57,12 +51,11 @@ export const TaskManager = () => {
     };
 
     const handleEditTask = async (id: string, title: string) => {
-        const task = tasks.find((t) => t.id === id);
-        if (!task) return;
+        const existing = tasks.find((t) => t.id === id);
+        if (!existing) return;
 
         try {
-            task.title = title
-            const updated = await updateTask(id, task);
+            const updated = await updateTask(id, { title });
             setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (err) {
             console.error("[handleEditTask] Error:", err);

@@ -24,7 +24,7 @@
       "@hooks/*": ["frontend/src/hooks/*"],
       "@lib/*": ["frontend/src/lib/*"],
       "@models/*": ["frontend/src/models/*"],
-      "@sevicies/*": ["frontend/src/sevicies/*"],      
+      "@services/*": ["frontend/src/services/*"],
       "@pages/*": ["frontend/src/pages/*"],
       "@styles/*": ["frontend/src/styles/*"],
       "@types/*": ["frontend/src/types/*"],

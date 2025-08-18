@@ -6,11 +6,12 @@ from datetime import datetime, timedelta, timezone
 from app.database import get_database
 from pymongo.database import Database
 from fastapi.security import OAuth2PasswordRequestForm
+import os
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "super_secret_jwt_key_123"
+SECRET_KEY = os.getenv("SECRET_KEY", "super_secret_jwt_key_123")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -96,19 +97,3 @@ def login_with_oauth(
     token = create_access_token(data={"sub": form_data.username})
     return TokenResponse(access_token=token, token_type="bearer")
 
-
-# === Optional: Login via /auth/login (for Swagger fallback) ===
-
-
-@router.post("/login", response_model=TokenResponse)
-def login_alias(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Database = Depends(get_database),
-) -> TokenResponse:
-    users = db["users"]
-    user = users.find_one({"email": form_data.username})
-    if not user or not pwd_context.verify(form_data.password, user["hashed_password"]):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-
-    token = create_access_token(data={"sub": form_data.username})
-    return TokenResponse(access_token=token, token_type="bearer")

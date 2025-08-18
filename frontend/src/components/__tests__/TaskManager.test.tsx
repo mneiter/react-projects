@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import * as taskService from "../../sevicies/tasksService";
+import * as taskService from "../../services/tasksService";
 import { Task } from "../../types/task";
 import { TaskManager } from "../TaskManager";
 
-jest.mock("@/sevicies/tasksService"); // заменим функции моками
+jest.mock("@/services/tasksService"); // заменим функции моками
 
 describe("TaskManager", () => {
     const mockedTasks: Task[] = [
