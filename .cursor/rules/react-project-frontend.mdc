@@ -1,0 +1,70 @@
+Title: React Project — ProjectRole
+
+Stack & Versions
+- React 18 + TypeScript, Vite, pnpm.
+- Router: react-router-dom.
+- Data: @tanstack/react-query.
+- Forms/Validation: react-hook-form + zod.
+- State: Zustand (light), Context for cross-cutting concerns.
+- Tests: vitest + @testing-library/react + @testing-library/user-event.
+- Lint/Format: ESLint (TS, React, hooks, import), Prettier.
+
+Architecture & Structure
+- Use a feature-first structure for anything beyond trivial:
+  src/
+    app/               # app shell, routing, providers
+    features/          # vertical slices (auth, tasks, profile…)
+    entities/          # domain models (user, task…), adapters
+    shared/            # ui (atoms), lib (utils), config, hooks
+    widgets/           # composed UI blocks
+- Use "@/..." import alias. No deep relative import spaghetti.
+
+Conventions
+- Components: PascalCase, 1 component per file when possible.
+- Hooks: useCamelCase, colocate with feature.
+- Exports: named exports; index.ts for barrel if logical.
+- Avoid default exports for utilities/hooks.
+- File naming: kebab-case for files, PascalCase for component files.
+- CSS: Tailwind preferred; minimal CSS modules if needed. No inline styles except rapid prototypes.
+- Comments: English only.
+
+API & Data Layer
+- Fetch with React Query. Define query keys in a central module.
+- Keep API adapters pure and typed; no UI logic inside.
+- Zod for runtime validation of external data. Narrow types based on parsed schema.
+- Global error handling: network errors -> toast/alert + retry button where relevant.
+
+Env & Config
+- All client envs must be prefixed with VITE_. Provide safe defaults for local dev.
+- Do not hardcode secrets.
+- Provide example .env.example whenever new envs are introduced.
+
+UX, A11y, i18n
+- Loading skeletons or spinners; handle empty states.
+- Keyboard accessibility and aria-* for interactive elements.
+- Keep strings centralized for future i18n.
+
+Performance
+- Split heavy routes/widgets via lazy() + Suspense.
+- Memoize expensive selectors; prefer React Query caching over ad-hoc global state.
+- Watch bundle size; avoid large deps unless justified.
+
+Testing
+- Unit: vitest for utils and hooks.
+- Component tests with RTL: cover success/loading/error/empty.
+- Write tests for bug fixes (regression safety).
+
+CI & Quality Gates (local are fine too)
+- Lint and test must pass before merge.
+- Pre-commit: lint-staged runs prettier & eslint --fix on staged files.
+
+Deliverables When Generating Code
+- Provide full file contents with path headers, e.g. “src/features/auth/api.ts”.
+- Include new deps and install command: pnpm add … / pnpm add -D …
+- Provide minimal tests where appropriate.
+- If touching routing or providers, show changes in src/app/main.tsx or src/app/routes.tsx.
+
+Examples of Common Scaffolds
+- Page with data fetch: create route, query hook, component with states (loading/error/empty/data).
+- Form: RHF + Zod schema, typed submit handler, inline error messaging, happy-path test.
+- Zustand store: typed state/actions, no side effects in reducers.

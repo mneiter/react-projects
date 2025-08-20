@@ -1,0 +1,130 @@
+Title: Backend — Python ProjectRole
+
+Stack & Versions
+- Python 3.12 (prefer 3.11+ features: typing, asyncio)
+- Web: FastAPI + Uvicorn (gunicorn for prod)
+- Data: MongoDB (motor), Redis (redis-py), Kafka (confluent-kafka or aiokafka)
+- Search: Elasticsearch (elastic-transport/elasticsearch)
+- Validation & Settings: pydantic v2 + pydantic-settings
+- Testing: pytest + pytest-asyncio + httpx (AsyncClient) + pytest-cov
+- Lint/Format: ruff (lint/isort) + black
+- Types: mypy (strict-ish), typing-extensions if needed
+- Observability: prometheus-client, OpenTelemetry (optional), standard logging (JSON)
+- Packaging: uv/poetry/pip-tools (choose one; default to uv or poetry)
+- Runtime: Docker; deploy to Kubernetes (12-factor)
+
+Project Structure
+- src/
+  app/                     # FastAPI app factory, routers, dependencies
+  app/api/                 # routers: v1/*.py (auth, items, health)
+  app/core/                # config, logging, security, constants
+  app/services/            # business logic (pure/async services)
+  app/db/                  # mongo motor client, redis, kafka producers/consumers
+  app/models/              # pydantic models & schemas
+  app/repositories/        # data-access layer (Mongo/ES/Kafka I/O)
+  app/workers/             # background jobs (Celery/RQ/custom consumers)
+  app/integrations/        # external APIs/adapters
+  app/metrics/             # prometheus metrics, middleware
+  app/utils/               # helpers (retry, time, id, serialization)
+  tests/                   # unit/integration/e2e (mirror src layout)
+- pyproject.toml           # black/ruff/mypy/pytest config
+- .env, .env.example       # environment samples (do not commit secrets)
+- docker/                  # Dockerfile(s), compose overrides
+- k8s/                     # manifests/helm values (if applicable)
+- Makefile                 # dev shortcuts
+- README.md                # how to run/test/deploy
+
+Conventions
+- Comments, docstrings, commit messages in English.
+- Async-first: use async def for I/O (motor, aiokafka, redis.async)
+- Dependency injection via FastAPI Depends; thin endpoints, fat services.
+- Pydantic models for request/response; never expose internal DB shapes directly.
+- Separate schemas: In/Out/Internal. Validate external input with zod-like rigor (pydantic).
+- Configuration only via env (pydantic-settings). No hardcoded creds/URLs.
+- Return structured errors (problem+json style where relevant).
+- Logging: JSON to stdout; include trace_id/request_id, user_id when available.
+- Metrics: expose /metrics with Prometheus; instrument HTTP latency, Kafka lag, DB ops.
+- Time in UTC; store ISO 8601; avoid naive datetimes.
+
+Quality Gates
+- CI runs: ruff + black --check + mypy + pytest -q
+- Coverage target ≥ 80% for core services and critical paths.
+- No failing mypy (strict = True for app/*).
+- Pre-commit hooks for ruff/black.
+
+Security
+- Validate all inputs; size limits for payloads; file uploads behind checks.
+- Use proper CORS; secure cookies (HttpOnly, SameSite), auth via JWT/OIDC where needed.
+- Secrets from env or secret manager; never commit secrets.
+- Sanitize logs; no PII unless required and masked.
+
+API Style
+- Versioned routes: /api/v1/*
+- Use app factory pattern: create_app(config) to ease testing.
+- Add /healthz (liveness) and /readyz (readiness) endpoints.
+- OpenAPI enabled; include tags, examples, response models & error models.
+
+Datastores & Messaging
+- Mongo (motor): central client with lifecycle hooks (startup/shutdown).
+- Repositories return domain models; no framework objects leaking upward.
+- Redis: for caching, rate limits, short-lived state; define TTLs explicitly.
+- Kafka: define topic names, key/value schemas; consumers idempotent; DLQ strategy documented.
+
+Observability
+- Structured logging: {"level","ts","msg","logger","trace_id","span_id","path","status"}
+- Prometheus middlewares for HTTP; counters/gauges/histograms for DB/Kafka.
+- Optional: OpenTelemetry for traces (FastAPI, motor, aiokafka instrumentations).
+
+Testing Strategy
+- Unit tests for services/utils (pure logic)
+- Integration tests with ephemeral Mongo/Redis/ES via docker-compose or testcontainers
+- API tests with httpx.AsyncClient (startup/shutdown lifespan)
+- Fixtures for app(), test clients, fake repos, factories for schemas
+- Contract tests for Kafka producers/consumers when feasible
+
+Makefile Targets (baseline)
+- make install        # install deps (uv/poetry/pip-tools)
+- make fmt            # black .
+- make lint           # ruff check .
+- make fix            # ruff --fix && black .
+- make type           # mypy src
+- make test           # pytest -q
+- make cov            # pytest --cov=src --cov-report=term-missing
+- make run            # uvicorn app.main:app --reload
+- make up/down/logs   # docker compose dev stack
+
+Deliverables When Generating Code
+- Provide full file paths and contents (ready to paste).
+- Include any new dependencies + exact install commands.
+- Add/modify tests to keep coverage and examples runnable.
+- Update README with quickstart if the change impacts local run.
+
+Common Scaffolds (what to generate by default)
+1) FastAPI app factory with settings, logging, /healthz, /readyz, /metrics
+2) Mongo motor client module with graceful startup/shutdown
+3) Example router (GET/POST) with pydantic In/Out models and validation
+4) Service + repository pattern example (async)
+5) Kafka producer/consumer skeleton (idempotent, graceful stop, metrics)
+6) Prometheus middleware + custom metrics example
+7) Pytest fixtures: app(), client(), mongo(), redis(), kafka()
+8) Dockerfile (slim, multi-stage) + docker-compose for dev (Mongo, Redis, Kafka, ES, Prometheus, Grafana)
+9) pyproject.toml preconfigured for black/ruff/mypy/pytest
+10) pre-commit config with black/ruff hooks
+
+Performance
+- Avoid N+1 in repos; create indices; use bounded concurrency (asyncio.Semaphore).
+- Reuse clients (mongo/redis/kafka) instead of reconnecting per request.
+- Cache hot reads in Redis with explicit invalidation.
+
+Docs
+- Keep README concise: setup, run, test, lint, type-check.
+- Document environment variables in .env.example with safe defaults.
+
+Windows Notes
+- Use cross-platform commands in Makefile (or provide .ps1 equivalents).
+- Prefer uv or poetry for reliable, reproducible installs on Windows.
+
+Optional Integrations
+- Datadog exporter for traces/metrics/logs (opt-in).
+- OpenAPI clients generated for consumers if needed.
+s
